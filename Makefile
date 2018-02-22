@@ -29,6 +29,7 @@ clean:
 fclean:
 	make clean -C objdump/
 	rm -f my_objdump
+	rm -f my_nm
 
 re:	fclean all
 
