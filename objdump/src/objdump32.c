@@ -1,17 +1,16 @@
 /*
 ** EPITECH PROJECT, 2018
-** nm/objdump
+** nmobjdump
 ** File description:
-** objdump main functions for 64bits architecture elf files
+** specific functions for 32 bits architecture files
 */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include "objdump.h"
 #include "parsing.h"
+#include "objdump.h"
 
-static void	dump_line(Elf64_Shdr *sections, char *section, size_t off)
+static void	dump_line(Elf32_Shdr *sections, char *section, size_t off)
 {
 	char	buffer[LINE_SIZE + 1];
 
@@ -27,7 +26,7 @@ static void	dump_line(Elf64_Shdr *sections, char *section, size_t off)
 	printf("  %s\n", buffer);
 }
 
-static void	dump_section(Elf64_Shdr *sections, char *section)
+static void	dump_section(Elf32_Shdr *sections, char *section)
 {
 	char	*fmt = get_format(sections->sh_size);
 
@@ -41,18 +40,13 @@ static void	dump_section(Elf64_Shdr *sections, char *section)
 static int	is_eligible_to_dump(char *name, uint32_t type)
 {
 	if (type != SHT_NOBITS && type != SHT_SYMTAB &&
-	(type != SHT_RELA || !strcmp(name, ".rela.dyn") ||
-	!strcmp(name, ".rela.plt")) && strcmp(name, ".strtab"))
+	(type != SHT_REL || !strcmp(name, ".rel.dyn") ||
+	!strcmp(name, ".rel.plt")) && strcmp(name, ".strtab"))
 		return (1);
 	return (0);
 }
 
-static void	print_info(char *elf_file, Elf64_Ehdr *header)
-{
-	printf("%s:     file format\n", elf_file);
-}
-
-void	dump_sections64(void *data, elf64_t *elf)
+void	dump_sections32(void *data, elf32_t *elf)
 {
 	void	*section;
 	char	*shstrtab = data +
@@ -63,8 +57,8 @@ void	dump_sections64(void *data, elf64_t *elf)
 		if (section == shstrtab)
 			break;
 		if (shstrtab[elf->sections[idx].sh_name] &&
-		    is_eligible_to_dump(&shstrtab[elf->sections[idx].sh_name],
-					elf->sections[idx].sh_type)) {
+		is_eligible_to_dump(&shstrtab[elf->sections[idx].sh_name],
+				    elf->sections[idx].sh_type)) {
 			printf("Contents of section %s:\n",
 			&shstrtab[elf->sections[idx].sh_name]);
 			dump_section(&(elf->sections[idx]), section);

@@ -5,11 +5,18 @@
 ## Makefile to compile objdump
 ##
 
-SRC	=	src/objdump64.c
+SRC	=	src/objdump32.c		\
+		src/objdump64.c		\
+		src/main.c		\
+		src/parsing.c		\
+		src/errors.c		\
+		src/common.c		\
+		src/truncated_file.c	\
+		src/init_structure.c
 
 OBJ	=	$(SRC:.c=.o)
 
-CFLAGS	=	-D_GNU_SOURCE
+CFLAGS	=	-D_GNU_SOURCE -Iinclude -Wall -Wextra -W
 
 NAME	=	my_objdump
 
@@ -17,6 +24,9 @@ all:	$(NAME)
 
 $(NAME):	$(OBJ)
 	gcc -o $(NAME) $(OBJ)
+
+debug:	CFLAGS += -ggdb3
+debug:	re
 
 clean:
 	rm -f $(OBJ)
