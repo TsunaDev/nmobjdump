@@ -30,25 +30,40 @@ static void	set_32bits_struct(elf_t *elf)
 	elf->class = ELFCLASS32;
 }
 
-int	get_elf(const int fd, elf_t *elf, const char *filename)
+static int	manage_file(elf_t *elf, Elf32_Ehdr *tmp, const char *prog)
 {
-	struct stat	s;
-	Elf32_Ehdr	*tmp;
-
-	fstat(fd, &s);
-	elf->data = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0);
-	if (elf->data == MAP_FAILED)
-		return (print_error(1, "Map failed\n", filename));
-	tmp = (Elf32_Ehdr *)elf->data;
-	if (!check_magic_number(tmp->e_ident))
-		return (print_error(0, "File format not recognized\n", filename));
 	if (tmp->e_ident[EI_CLASS] == ELFCLASS32)
 		set_32bits_struct(elf);
 	else if (tmp->e_ident[EI_CLASS] == ELFCLASS64)
 		set_64bits_struct(elf);
 	else
-		return (print_error(0, "Unknown class\n", filename));
-	if (is_truncated(elf, s.st_size))
-		return (print_error(0, "File truncated\n", filename));
+		return (print_error(prog, "Unknown class\n",
+				elf->filename, 0));
+	if (is_truncated(elf, elf->size))
+		return (print_error(prog, "File truncated\n",
+				elf->filename, 0));
 	return (1);
+}
+
+int	get_elf(const char *prog, const int fd, elf_t *elf)
+{
+	struct stat	s;
+	Elf32_Ehdr	*tmp;
+
+	fstat(fd, &s);
+	if (S_ISDIR(s.st_mode))
+		return (print_error(prog, "is a directory\n",
+				elf->filename, 2));
+	if (s.st_size == 0)
+		return (print_error(prog, "File format not recognized\n",
+				elf->filename, 0));
+	elf->data = mmap(NULL, s.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	elf->size = s.st_size;
+	if (elf->data == MAP_FAILED)
+		return (print_error(prog, "Map failed\n", elf->filename, 0));
+	tmp = (Elf32_Ehdr *)elf->data;
+	if (!check_magic_number(tmp->e_ident))
+		return (print_error(prog, "File format not recognized\n",
+				elf->filename, 0));
+	return (manage_file(elf, tmp, prog));
 }

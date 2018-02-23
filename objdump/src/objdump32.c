@@ -46,19 +46,33 @@ static int	is_eligible_to_dump(char *name, uint32_t type)
 	return (0);
 }
 
-void	dump_sections32(void *data, elf32_t *elf)
+static void	print_info(void *data, const char *elf_file, elf32_t *elf)
+{
+	char	*flags_string = malloc(sizeof(char));
+	size_t	flags = get_flags32(data, elf, &flags_string);
+
+	printf("\n%s:     file format elf32-i386\n", elf_file);
+	printf("architecture: %s, flags 0x%08lx:\n",
+	(elf->header->e_machine == EM_386) ? "i386" : "unknown",
+	flags);
+	printf("%s\n", flags_string);
+	printf("start address 0x%08x\n\n", elf->header->e_entry);
+}
+
+void	dump_sections32(void *data, elf32_t *elf, const char *file)
 {
 	void	*section;
 	char	*shstrtab = data +
 		elf->sections[elf->header->e_shstrndx].sh_offset;
 
+	print_info(data, file, elf);
 	for (size_t idx = 0; idx < elf->header->e_shnum; idx++) {
 		section = data + elf->sections[idx].sh_offset;
 		if (section == shstrtab)
 			break;
 		if (shstrtab[elf->sections[idx].sh_name] &&
 		is_eligible_to_dump(&shstrtab[elf->sections[idx].sh_name],
-				    elf->sections[idx].sh_type)) {
+				elf->sections[idx].sh_type)) {
 			printf("Contents of section %s:\n",
 			&shstrtab[elf->sections[idx].sh_name]);
 			dump_section(&(elf->sections[idx]), section);

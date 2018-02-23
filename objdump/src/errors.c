@@ -18,12 +18,15 @@ int	check_magic_number(unsigned char ident[])
 	return (0);
 }
 
-int	print_error(const int opt, const char *err, const char *filename)
+int	print_error(const char *src, const char *err,
+		const char *filename, int opt)
 {
-	if (opt == 0)
-		dprintf(2, "objdump: %s: ", filename);
+	if (opt == 1)
+		dprintf(2, "%s: '%s': ", src, filename);
+	else if (opt == 2)
+		dprintf(2, "%s: Warning: '%s' ", src, filename);
 	else
-		dprintf(2, "mmap: ");
+		dprintf(2, "%s: %s: ", src, filename);
 	dprintf(2, err);
 	return (0);
 }

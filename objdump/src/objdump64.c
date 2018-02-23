@@ -47,23 +47,32 @@ static int	is_eligible_to_dump(char *name, uint32_t type)
 	return (0);
 }
 
-static void	print_info(char *elf_file, Elf64_Ehdr *header)
+static void	print_info(void *data, const char *elf_file, elf64_t *elf)
 {
-	printf("%s:     file format\n", elf_file);
+	char	*flags_string = malloc(sizeof(char));
+	size_t	flags = get_flags64(data, elf, &flags_string);
+
+	printf("\n%s:     file format elf64-x86-64\n", elf_file);
+	printf("architecture: %s, flags 0x%08lx:\n",
+	(elf->header->e_machine == EM_X86_64) ? "i386:x86-64" : "unknown",
+	(flags));
+	printf("%s\n", flags_string);
+	printf("start address 0x%016lx\n\n", elf->header->e_entry);
 }
 
-void	dump_sections64(void *data, elf64_t *elf)
+void	dump_sections64(void *data, elf64_t *elf, const char *file)
 {
 	void	*section;
 	char	*shstrtab = data +
 		elf->sections[elf->header->e_shstrndx].sh_offset;
 
+	print_info(data, file, elf);
 	for (size_t idx = 0; idx < elf->header->e_shnum; idx++) {
 		section = data + elf->sections[idx].sh_offset;
 		if (section == shstrtab)
 			break;
 		if (shstrtab[elf->sections[idx].sh_name] &&
-		    is_eligible_to_dump(&shstrtab[elf->sections[idx].sh_name],
+		is_eligible_to_dump(&shstrtab[elf->sections[idx].sh_name],
 					elf->sections[idx].sh_type)) {
 			printf("Contents of section %s:\n",
 			&shstrtab[elf->sections[idx].sh_name]);

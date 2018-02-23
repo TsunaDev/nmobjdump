@@ -10,6 +10,6 @@
 
 int	is_truncated(elf_t *, size_t);
 int	check_magic_number(unsigned char ident[]);
-int	print_error(const int, const char *, const char *);
+int	print_error(const char *, const char *, const char *, int);
 
 #endif	/* !ERRORS_H_ */

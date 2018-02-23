@@ -12,7 +12,10 @@ SRC	=	src/objdump32.c		\
 		src/errors.c		\
 		src/common.c		\
 		src/truncated_file.c	\
-		src/init_structure.c
+		src/init_structure.c	\
+		src/flags32.c		\
+		src/flags64.c		\
+		src/strcat_realloc.c
 
 OBJ	=	$(SRC:.c=.o)
 

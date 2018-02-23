@@ -26,13 +26,17 @@ typedef struct	elf32 {
 typedef struct	elf {
 	void		*data;
 	char		class;
+	size_t		size;
+	const char	*filename;
 	elf64_t		*elf64;
 	elf32_t		*elf32;
 }		elf_t;
 
-int	get_elf(const int, elf_t *, const char *);
-void	dump_sections32(void *, elf32_t *);
-void	dump_sections64(void *, elf64_t *);
+int	get_elf(const char *, const int, elf_t *);
+size_t	get_flags32(void *, elf32_t *, char **);
+size_t	get_flags64(void *, elf64_t *, char **);
+void	dump_sections32(void *, elf32_t *, const char *);
+void	dump_sections64(void *, elf64_t *, const char *);
 char	dump_byte(char, int);
 
 #endif	/* !OBJDUMP_H_ */
