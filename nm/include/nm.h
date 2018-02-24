@@ -19,7 +19,7 @@ typedef	struct	elf64 {
 	Elf64_Shdr	*shsymtab;
 	Elf64_Shdr	*shstrtab;
 	Elf64_Sym	*symtab;
-	char		*symtab_str;
+	char		*strtab;
 }		elf64_t;
 
 typedef struct	elf32 {
@@ -28,7 +28,7 @@ typedef struct	elf32 {
 	Elf32_Shdr	*shsymtab;
 	Elf32_Shdr	*shstrtab;
 	Elf32_Sym	*symtab;
-	char		*symtab_str;
+	char		*strtab;
 }		elf32_t;
 
 typedef struct	elf {
@@ -43,5 +43,7 @@ typedef struct	elf {
 int	get_elf(const char *, const int, elf_t *);
 void	set_32bits_symtab(void *, elf32_t *);
 void	set_64bits_symtab(void *, elf64_t *);
+void	dump_symbols64(elf64_t *);
+char	get_flags64(Elf64_Sym *, Elf64_Shdr *);
 
 #endif	/* !NM_H_ */

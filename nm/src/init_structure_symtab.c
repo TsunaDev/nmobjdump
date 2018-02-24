@@ -23,7 +23,7 @@ void	set_64bits_symtab(void *data, elf64_t *elf)
 		elf->symtab = (Elf64_Sym *)((char *)data +
 				elf->shsymtab->sh_offset);
 	if (elf->shstrtab)
-		elf->symtab_str = (char *)((char *)data + elf->shstrtab->
+		elf->strtab = (char *)((char *)data + elf->shstrtab->
 						sh_offset);
 }
 
@@ -42,7 +42,7 @@ void	set_32bits_symtab(void *data, elf32_t *elf)
 		elf->symtab = (Elf32_Sym *)((char *)data +
 				elf->shsymtab->sh_offset);
 	if (elf->shstrtab)
-		elf->symtab_str = (char *)((char *)data + elf->shstrtab->
+		elf->strtab = (char *)((char *)data + elf->shstrtab->
 						sh_offset);
 }
 

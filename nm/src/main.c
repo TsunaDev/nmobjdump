@@ -27,7 +27,7 @@ static int	print_file_info(const char *prog,
 //		dump_symbols32(elf.data, elf.elf32, filename);
 		free(elf.elf32);
 	} else if (elf.class == ELFCLASS64) {
-//		dump_symbols64(elf.data, elf.elf64, filename);
+		dump_symbols64(elf.elf64);
 		free(elf.elf64);
 	} else
 		return (0);
