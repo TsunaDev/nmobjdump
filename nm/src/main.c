@@ -56,6 +56,8 @@ int	main(int ac, char **av)
 	if (ac == 1)
 		return (default_path(av[0]));
 	for (size_t idx = 1; idx < (size_t)ac; idx++) {
+		if (ac > 2)
+			printf("\n%s:\n", av[idx]);
 		fd = open(av[idx], O_RDONLY);
 		if (fd < 0) {
 			print_error(av[0], "No such file\n", av[idx], 1);

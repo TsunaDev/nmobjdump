@@ -5,10 +5,11 @@
 ## Makefile to compile objdump
 ##
 
-SRC	=	src/main.c		\
-		src/errors.c		\
-		src/truncated_file.c	\
-		src/init_structure.c
+SRC	=	src/main.c			\
+		src/errors.c			\
+		src/truncated_file.c		\
+		src/init_structure.c		\
+		src/init_structure_symtab.c	\
 
 OBJ	=	$(SRC:.c=.o)
 

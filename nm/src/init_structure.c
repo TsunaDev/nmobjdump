@@ -7,65 +7,54 @@
 
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <string.h>
 #include "nm.h"
 #include "errors.h"
 
-static void	set_64bits_struct(elf_t *elf)
+static int	set_64bits_struct(elf_t *elf, const char *prog)
 {
-	char	*shstrtab;
-
 	elf->elf64 = malloc(sizeof(elf64_t));
 	elf->elf32 = NULL;
 	elf->elf64->header = (Elf64_Ehdr *)elf->data;
 	elf->elf64->sections = (Elf64_Shdr *)(elf->data +
 					elf->elf64->header->e_shoff);
-	shstrtab = (char *)(elf->data +
-			elf->elf64->sections[elf->elf64->header->e_shstrndx].
-			sh_offset);
-	for (size_t idx = 0; idx < elf->elf64->header->e_shnum; idx++) {
-		if (strcmp(&shstrtab[elf->elf64->sections[idx].sh_name],
-			".symtab"))
-			elf->elf64->symtab = &(elf->elf64->sections[idx]);
-		if (strcmp(&shstrtab[elf->elf64->sections[idx].sh_name],
-			".strtab"))
-			elf->elf64->strtab = &(elf->elf64->sections[idx]);
-	}
+	elf->elf64->shsymtab = NULL;
+	elf->elf64->shstrtab = NULL;
+	set_64bits_symtab(elf->data, elf->elf64);
 	elf->class = ELFCLASS64;
+	if (!elf->elf64->shsymtab || !elf->elf64->shstrtab)
+		return (print_error(prog, "no symbols\n", elf->filename, 0));
+	return (1);
 }
 
-static void	set_32bits_struct(elf_t *elf)
+static int	set_32bits_struct(elf_t *elf, const char *prog)
 {
-	char	*shstrtab;
-
 	elf->elf32 = malloc(sizeof(elf32_t));
 	elf->elf64 = NULL;
 	elf->elf32->header = (Elf32_Ehdr *)elf->data;
 	elf->elf32->sections = (Elf32_Shdr *)(elf->data +
 					elf->elf32->header->e_shoff);
-	shstrtab = (char *)(elf->data +
-			elf->elf32->sections[elf->elf32->header->e_shstrndx].
-			sh_offset);
-	for (size_t idx = 0; idx < elf->elf32->header->e_shnum; idx++) {
-		if (strcmp(&shstrtab[elf->elf32->sections[idx].sh_name],
-			".symtab"))
-			elf->elf32->symtab = &(elf->elf32->sections[idx]);
-		if (strcmp(&shstrtab[elf->elf32->sections[idx].sh_name],
-			".strtab"))
-			elf->elf32->strtab = &(elf->elf32->sections[idx]);
-	}
+	elf->elf32->shsymtab = NULL;
+	elf->elf32->shstrtab = NULL;
+	set_32bits_symtab(elf->data, elf->elf32);
 	elf->class = ELFCLASS32;
+	if (!elf->elf32->shsymtab || !elf->elf32->shstrtab)
+		return (print_error(prog, "no symbols\n", elf->filename, 0));
+	return (1);
 }
 
 static int	manage_file(elf_t *elf, Elf32_Ehdr *tmp, const char *prog)
 {
+	int	ret = 1;
+
 	if (tmp->e_ident[EI_CLASS] == ELFCLASS32)
-		set_32bits_struct(elf);
+		ret = set_32bits_struct(elf, prog);
 	else if (tmp->e_ident[EI_CLASS] == ELFCLASS64)
-		set_64bits_struct(elf);
+		ret = set_64bits_struct(elf, prog);
 	else
 		return (print_error(prog, "Unknown class\n",
 				elf->filename, 0));
+	if (!ret)
+		return (0);
 	if (is_truncated(elf, elf->size))
 		return (print_error(prog, "File truncated\n",
 				elf->filename, 0));
