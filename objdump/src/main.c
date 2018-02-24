@@ -23,11 +23,13 @@ static int	print_file_info(const char *prog,
 	elf.filename = filename;
 	if (!get_elf(prog, fd, &elf))
 		return (0);
-	if (elf.class == ELFCLASS32)
+	if (elf.class == ELFCLASS32) {
 		dump_sections32(elf.data, elf.elf32, filename);
-	else if (elf.class == ELFCLASS64)
+		free(elf.elf32);
+	} else if (elf.class == ELFCLASS64) {
 		dump_sections64(elf.data, elf.elf64, filename);
-	else
+		free(elf.elf64);
+	} else
 		return (0);
 	munmap(elf.data, elf.size);
 	return (1);

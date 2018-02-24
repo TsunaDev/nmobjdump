@@ -36,6 +36,7 @@ static void	dump_section(Elf64_Shdr *sections, char *section)
 		printf(fmt, (unsigned)(sections->sh_addr + offset));
 		dump_line(sections, section, offset);
 	}
+	free(fmt);
 }
 
 static int	is_eligible_to_dump(char *name, uint32_t type)
@@ -57,6 +58,7 @@ static void	print_info(void *data, const char *elf_file, elf64_t *elf)
 	(elf->header->e_machine == EM_X86_64) ? "i386:x86-64" : "unknown",
 	(flags));
 	printf("%s\n", flags_string);
+	free(flags_string);
 	printf("start address 0x%016lx\n\n", elf->header->e_entry);
 }
 

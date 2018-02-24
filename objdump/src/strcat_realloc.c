@@ -25,5 +25,6 @@ char	*strcat_realloc(char *dest, char *str)
 		n_idx++;
 	}
 	new[n_idx] = 0;
+	free(dest);
 	return (new);
 }
