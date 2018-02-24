@@ -2,9 +2,34 @@
 ## EPITECH PROJECT, 2018
 ## nmobjdump
 ## File description:
-## nm's Makefile
+## Makefile to compile objdump
 ##
 
-all:
-	echo "not done yet"
-	touch my_nm
+SRC	=	src/main.c		\
+		src/errors.c		\
+		src/truncated_file.c	\
+		src/init_structure.c
+
+OBJ	=	$(SRC:.c=.o)
+
+CFLAGS	=	-D_GNU_SOURCE -Iinclude -Wall -Wextra -W
+
+NAME	=	my_nm
+
+all:	$(NAME)
+
+$(NAME):	$(OBJ)
+	gcc -o $(NAME) $(OBJ)
+
+debug:	CFLAGS += -ggdb3
+debug:	re
+
+clean:
+	rm -f $(OBJ)
+
+fclean:	clean
+	rm -f $(NAME)
+
+re:	fclean all
+
+.PHONY:	all clean fclean re
