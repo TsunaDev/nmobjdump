@@ -9,17 +9,19 @@
 #include "nm.h"
 
 
-void	dump_symbol64(elf64_t *elf, size_t idx)
+static void	dump_symbol64(void *data, elf64_t *elf, size_t idx)
 {
-	char	flag = get_flags64(&(elf->symtab[idx]), elf->sections);
+	char	*shstrtab = (char *)(data + elf->sections
+				[elf->header->e_shstrndx].sh_offset);
+	char	flag;
 
 	if (elf->symtab[idx].st_name != 0 &&
 	elf->symtab[idx].st_name != 1 &&
 	elf->symtab[idx].st_info != 4) {
+		flag = get_flags64(&(elf->symtab[idx]), elf->sections, shstrtab);
+//		printf("%s\n", &shstrtab[elf->sections[elf->symtab[idx].st_shndx].sh_name]);
 		if (flag != 'U' && flag != 'w')
-			printf("%08x%08x ", (uint32_t)
-			(elf->symtab[idx].st_value >> 32),
-			(uint32_t)elf->symtab[idx].st_value);
+			printf("%016lx ", elf->symtab[idx].st_value);
 		else
 			printf("%16c ", ' ');
 		printf("%c", flag);
@@ -27,11 +29,11 @@ void	dump_symbol64(elf64_t *elf, size_t idx)
 	}
 }
 
-void	dump_symbols64(elf64_t *elf)
+void	dump_symbols64(void *data, elf64_t *elf)
 {
 	size_t	size = elf->shsymtab->sh_size / sizeof(*(elf->symtab));
 
 	for (size_t idx = 0; idx < size; idx++) {
-		dump_symbol64(elf, idx);
+		dump_symbol64(data, elf, idx);
 	}
 }

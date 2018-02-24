@@ -7,6 +7,7 @@
 
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <stdio.h>
 #include "nm.h"
 #include "errors.h"
 
@@ -42,10 +43,13 @@ static int	set_32bits_struct(elf_t *elf, const char *prog)
 	return (1);
 }
 
-static int	manage_file(elf_t *elf, Elf32_Ehdr *tmp, const char *prog)
+static int	manage_file(elf_t *elf, Elf32_Ehdr *tmp,
+			const char *prog, int ac)
 {
 	int	ret = 1;
 
+	if (ac > 2)
+		printf("\n%s:\n", elf->filename);
 	if (tmp->e_ident[EI_CLASS] == ELFCLASS32)
 		ret = set_32bits_struct(elf, prog);
 	else if (tmp->e_ident[EI_CLASS] == ELFCLASS64)
@@ -61,7 +65,7 @@ static int	manage_file(elf_t *elf, Elf32_Ehdr *tmp, const char *prog)
 	return (1);
 }
 
-int	get_elf(const char *prog, const int fd, elf_t *elf)
+int	get_elf(const char *prog, const int fd, elf_t *elf, int ac)
 {
 	struct stat	s;
 	Elf32_Ehdr	*tmp;
@@ -81,5 +85,5 @@ int	get_elf(const char *prog, const int fd, elf_t *elf)
 	if (!check_magic_number(tmp->e_ident))
 		return (print_error(prog, "File format not recognized\n",
 				elf->filename, 0));
-	return (manage_file(elf, tmp, prog));
+	return (manage_file(elf, tmp, prog, ac));
 }

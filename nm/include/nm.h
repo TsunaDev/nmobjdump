@@ -40,10 +40,10 @@ typedef struct	elf {
 	elf32_t		*elf32;
 }		elf_t;
 
-int	get_elf(const char *, const int, elf_t *);
+int	get_elf(const char *, const int, elf_t *, int);
 void	set_32bits_symtab(void *, elf32_t *);
 void	set_64bits_symtab(void *, elf64_t *);
-void	dump_symbols64(elf64_t *);
-char	get_flags64(Elf64_Sym *, Elf64_Shdr *);
+void	dump_symbols64(void *, elf64_t *);
+char	get_flags64(Elf64_Sym *, Elf64_Shdr *, char *);
 
 #endif	/* !NM_H_ */
