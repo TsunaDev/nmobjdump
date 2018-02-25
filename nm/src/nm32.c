@@ -9,7 +9,7 @@
 #include "nm.h"
 
 
-static void	dump_symbol(void *data, elf64_t *elf, size_t idx)
+static void	dump_symbol(void *data, elf32_t *elf, size_t idx)
 {
 	char	*shstrtab = (char *)(data + elf->sections
 				[elf->header->e_shstrndx].sh_offset);
@@ -18,18 +18,18 @@ static void	dump_symbol(void *data, elf64_t *elf, size_t idx)
 	if (elf->symtab[idx].st_name != 0 &&
 	elf->symtab[idx].st_name != 1 &&
 	elf->symtab[idx].st_info != 4) {
-		flag = get_flags64(&(elf->symtab[idx]), elf->sections,
+		flag = get_flags32(&(elf->symtab[idx]), elf->sections,
 				shstrtab);
 		if (flag != 'U' && flag != 'w')
-			printf("%016lx ", elf->symtab[idx].st_value);
+			printf("%08x ", elf->symtab[idx].st_value);
 		else
-			printf("%16c ", ' ');
+			printf("%8c ", ' ');
 		printf("%c", flag);
 		printf(" %s\n", &(elf->strtab)[elf->symtab[idx].st_name]);
 	}
 }
 
-void	dump_symbols64(void *data, elf64_t *elf)
+void	dump_symbols32(void *data, elf32_t *elf)
 {
 	size_t	size = elf->shsymtab->sh_size / sizeof(*(elf->symtab));
 

@@ -17,19 +17,19 @@ objdump:	$(OBJDUMP)
 
 $(NM):
 	make -C nm/
-	mv nm/my_nm ./
+	mv nm/$(NM) ./
 
 $(OBJDUMP):
 	make -C objdump/
-	mv objdump/my_objdump ./
+	mv objdump/$(OBJDUMP) ./
 
 clean:
 	make clean -C objdump/
+	make clean -C nm/
 
-fclean:
-	make clean -C objdump/
-	rm -f my_objdump
-	rm -f my_nm
+fclean:	clean
+	rm -f $(NM)
+	rm -f $(OBJDUMP)
 
 re:	fclean all
 

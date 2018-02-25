@@ -11,7 +11,9 @@ SRC	=	src/main.c			\
 		src/init_structure.c		\
 		src/init_structure_symtab.c	\
 		src/nm64.c			\
-		src/flags64.c
+		src/flags64.c			\
+		src/nm32.c			\
+		src/flags32.c
 
 OBJ	=	$(SRC:.c=.o)
 

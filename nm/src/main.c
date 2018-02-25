@@ -24,7 +24,7 @@ static int	print_file_info(const char *prog, const int fd,
 	if (!get_elf(prog, fd, &elf, ac))
 		return (0);
 	if (elf.class == ELFCLASS32) {
-//		dump_symbols32(elf.data, elf.elf32, filename);
+		dump_symbols32(elf.data, elf.elf32);
 		free(elf.elf32);
 	} else if (elf.class == ELFCLASS64) {
 		dump_symbols64(elf.data, elf.elf64);
