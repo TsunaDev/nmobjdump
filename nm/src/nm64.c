@@ -18,8 +18,8 @@ static void	dump_symbol64(void *data, elf64_t *elf, size_t idx)
 	if (elf->symtab[idx].st_name != 0 &&
 	elf->symtab[idx].st_name != 1 &&
 	elf->symtab[idx].st_info != 4) {
-		flag = get_flags64(&(elf->symtab[idx]), elf->sections, shstrtab);
-//		printf("%s\n", &shstrtab[elf->sections[elf->symtab[idx].st_shndx].sh_name]);
+		flag = get_flags64(&(elf->symtab[idx]), elf->sections,
+				shstrtab);
 		if (flag != 'U' && flag != 'w')
 			printf("%016lx ", elf->symtab[idx].st_value);
 		else
