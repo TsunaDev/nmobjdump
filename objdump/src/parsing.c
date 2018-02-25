@@ -10,17 +10,14 @@
 
 char	*get_format(size_t size)
 {
-	unsigned int	quotient = (unsigned int)size;
-	int		count = 0;
-	char		*ret;
+	unsigned int	nb = sizeof(size);
 	int		check;
+	char		*ret;
 
-	while (quotient != 0) {
-		quotient /= 16;
-		count++;
-	}
-	if (count < 4)
-		count = 4;
-	check = asprintf(&ret, " %%0%dx", count);
+	while (nb > 0 && !((0xf << ((nb - 1) * 4)) & size))
+		nb--;
+	if (nb < 4)
+		nb = 4;
+	check = asprintf(&ret, " %%0%dx", nb);
 	return ((check != -1) ? ret : NULL);
 }
